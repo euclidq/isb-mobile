@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { StyleSheet, Text, View, Image, StatusBar, TouchableOpacity, ScrollView, FlatList, RefreshControl } from 'react-native';
+import { StyleSheet, Text, View, Image, StatusBar, TouchableOpacity, ScrollView, FlatList, RefreshControl, Platform } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Constants from 'expo-constants';
 import axios from 'axios';
 
 import { useLoadFonts } from '../hooks/useLoadFonts';
@@ -22,6 +23,7 @@ const Home = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [barangayLogo, setBarangayLogo] = useState('');
+    const [notificationsCount, setNotificationsCount] = useState(0);
 
     const [showAlertModal, setShowAlertModal] = useState(false);
     const [modalContent, setModalContent] = useState({ title: '', message: '', buttons: [] });
@@ -56,80 +58,112 @@ const Home = () => {
         }, [])
     );
 
-    useEffect(() => {
-        const getDocumentRequestsAndIncidentReports = async () => {
-            if (!userData._id) return;
+    // useEffect(() => {
+    //     const getDocumentRequestsAndIncidentReports = async () => {
+    //         if (!userData._id) {
+    //             setIsLoading(true);
+    //         }
     
-            setIsLoading(true);
-            try {
-                const documentResponse = await axios.get(`${process.env.EXPO_PUBLIC_API_BASE_URL}/document-requests/history/${userData._id}`);
-                const incidentResponse = await axios.get(`${process.env.EXPO_PUBLIC_API_BASE_URL}/incident-reports/history/${userData._id}`);
-                const sortedIncidentReports = incidentResponse.data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    //         try {
+    //             const documentResponse = await axios.get(`${process.env.EXPO_PUBLIC_API_BASE_URL}/document-requests/history/${userData._id}`);
+    //             const incidentResponse = await axios.get(`${process.env.EXPO_PUBLIC_API_BASE_URL}/incident-reports/history/${userData._id}`);
+    //             const sortedIncidentReports = incidentResponse.data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+                
+    //             const approvedDocumentRequests = documentResponse.data
+    //                 .filter((request) => request.status === 'Approved')
+    //                 .map((request) => request.ReferenceNo);
     
-                const approvedDocumentRequests = documentResponse.data
-                    .filter((request) => request.status === 'Approved')
-                    .map((request) => request.ReferenceNo);
-    
-                const verifiedIncidentReports = sortedIncidentReports
-                    .filter((report) => report.status === 'Verified')
-                    .map((report) => report.ReferenceNo);
+    //             const verifiedIncidentReports = sortedIncidentReports
+    //                 .filter((report) => report.status === 'Verified')
+    //                 .map((report) => report.ReferenceNo);
 
-                // Combined ReferenceNo for both approved document requests and verified complaints
-                if (approvedDocumentRequests.length > 0 && verifiedIncidentReports.length > 0) {
-                    setModalContent({
-                        title: 'Document Request(s) Approved and Complaint(s) Verified',
-                        message: `You have ${approvedDocumentRequests.length} approved document request(s) and ${verifiedIncidentReports.length} verified complaint(s).\n\nYou may now visit the barangay to collect your document(s) and further process your complaint(s).`,
-                        buttons: [
-                            {
-                                label: 'Close',
-                                onPress: () => setShowAlertModal(false)
-                            }
-                        ]
-                    });
-                    setShowAlertModal(true);
-                } 
-                // Only approved document requests
-                else if (approvedDocumentRequests.length > 0) {
-                    setModalContent({
-                        title: 'Document Request(s) Approved',
-                        message: `You have ${approvedDocumentRequests.length} approved document request(s).\n\nYou may now visit the barangay to collect your document(s).`,
-                        buttons: [
-                            {
-                                label: 'Close',
-                                onPress: () => setShowAlertModal(false)
-                            }
-                        ]
-                    });
-                    setShowAlertModal(true);
-                }
-                // Only verified complaints
-                else if (verifiedIncidentReports.length > 0) {
-                    setModalContent({
-                        title: 'Complaint(s) Verified',
-                        message: `You have ${verifiedIncidentReports.length} verified complaint(s).\n\nYou may now visit the barangay to further process your complaint(s).`,
-                        buttons: [
-                            {
-                                label: 'Close',
-                                onPress: () => setShowAlertModal(false)
-                            }
-                        ]
-                    });
-                    setShowAlertModal(true);
-                }
+    //             // Combined ReferenceNo for both approved document requests and verified complaints
+    //             if (approvedDocumentRequests.length > 0 && verifiedIncidentReports.length > 0) {
+    //                 setModalContent({
+    //                     title: 'Document Request(s) Approved and Complaint(s) Verified',
+    //                     message: `You have ${approvedDocumentRequests.length} approved document request(s) and ${verifiedIncidentReports.length} verified complaint(s).\n\nYou may now visit the barangay to collect your document(s) and further process your complaint(s).`,
+    //                     buttons: [
+    //                         {
+    //                             label: 'Close',
+    //                             onPress: () => setShowAlertModal(false)
+    //                         }
+    //                     ]
+    //                 });
+    //                 setShowAlertModal(true);
+    //             } 
+    //             // Only approved document requests
+    //             else if (approvedDocumentRequests.length > 0) {
+    //                 setModalContent({
+    //                     title: 'Document Request(s) Approved',
+    //                     message: `You have ${approvedDocumentRequests.length} approved document request(s).\n\nYou may now visit the barangay to collect your document(s).`,
+    //                     buttons: [
+    //                         {
+    //                             label: 'Close',
+    //                             onPress: () => setShowAlertModal(false)
+    //                         }
+    //                     ]
+    //                 });
+    //                 setShowAlertModal(true);
+    //             }
+    //             // Only verified complaints
+    //             else if (verifiedIncidentReports.length > 0) {
+    //                 setModalContent({
+    //                     title: 'Complaint(s) Verified',
+    //                     message: `You have ${verifiedIncidentReports.length} verified complaint(s).\n\nYou may now visit the barangay to further process your complaint(s).`,
+    //                     buttons: [
+    //                         {
+    //                             label: 'Close',
+    //                             onPress: () => setShowAlertModal(false)
+    //                         }
+    //                     ]
+    //                 });
+    //                 setShowAlertModal(true);
+    //             }
     
+    //         } catch (error) {
+    //             if (error.response?.status === 404) {
+    //                 console.error('No document requests or incident reports found.');
+    //             } else {
+    //                 console.error(`${error.response?.data?.message || 'Unknown error'}`);
+    //             }
+    //         } finally {
+    //             setIsLoading(false);
+    //         }
+    //     };
+    
+    //     getDocumentRequestsAndIncidentReports();
+    // }, [userData._id]);
+
+    useEffect(() => {
+        const getNotificationsModal = async () => {
+            const storedUserData = JSON.parse(await AsyncStorage.getItem('userData'));
+            const storedUserType = await AsyncStorage.getItem('userType');
+
+            
+            try {
+                if (storedUserType === 'resident') {
+                    const response = await axios.get(`${process.env.EXPO_PUBLIC_API_BASE_URL}/notifications/user/${storedUserData._id}`);
+                    setNotificationsCount(response.data.notifications.filter(n => !n.readStatus).length);
+                }
+                if (notificationsCount && notificationsCount > 0) {
+                    setModalContent({
+                        title: 'Unread Notifications',
+                        message: `You have ${notificationsCount} unread notification(s).`,
+                        buttons: [
+                            {
+                                label: 'Close',
+                                onPress: () => setShowAlertModal(false)
+                            }
+                        ]
+                    });
+                    setShowAlertModal(true);
+                }
             } catch (error) {
-                if (error.response?.status === 404) {
-                    console.error('No document requests or incident reports found.');
-                } else {
-                    alert(`${error.response?.data?.message || 'Unknown error'}`);
-                }
-            } finally {
-                setIsLoading(false);
+                console.error('Error fetching notifications:', error);
             }
-        };
-    
-        getDocumentRequestsAndIncidentReports();
-    }, []);
+        }
+        getNotificationsModal();
+    }, [notificationsCount]);
 
     const getAnnouncements = async (isRefreshing = false) => {
         if (!isRefreshing) {
@@ -204,7 +238,7 @@ const Home = () => {
     return (
         <>
             <View style={globalStyles.container}>
-                <View style={styles.header}>
+                <View style={[styles.header, {marginTop: Platform.OS === 'ios' ? 0 : Constants.statusBarHeight}]}>
                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', flex: 1, gap: spacing.s, height: 50}}>
                         {barangayLogo && (<Image source={{ uri: barangayLogo }} style={{ width: 50, height: 50 }}/>)}
                         <Image source={require('../assets/images/isb-logo.png')} style={{ width: 150}} resizeMode='contain'/>
@@ -318,7 +352,9 @@ const Home = () => {
                                     
                                 </>
                             ) : (
-                                <Text style={[fontStyles.body, { textAlign: 'center' }]}>No announcements available</Text>
+                                <View style={{ height: '100%' }}>
+                                    <Text style={[fontStyles.body, { textAlign: 'center' }]}>No announcements available</Text>
+                                </View>
                             )
                         )}
                         </View>

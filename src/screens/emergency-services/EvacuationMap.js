@@ -4,7 +4,7 @@ import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 import * as Location from 'expo-location';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { colors, shadow, sizes, spacing } from '../../styles/theme';
+import { colors, spacing } from '../../styles/theme';
 
 const GOOGLE_MAPS_APIKEY = 'AIzaSyDpLwDFGDAxSFaAhiJdf3zLWB0tDAJr2S8';
 
