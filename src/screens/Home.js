@@ -238,7 +238,7 @@ const Home = () => {
     return (
         <>
             <View style={globalStyles.container}>
-                <View style={[styles.header, {marginTop: Platform.OS === 'ios' ? 0 : Constants.statusBarHeight}]}>
+                <View style={[styles.header, {marginTop: Platform.OS === 'ios' ? 0 : StatusBar.currentHeight}]}>
                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', flex: 1, gap: spacing.s, height: 50}}>
                         {barangayLogo && (<Image source={{ uri: barangayLogo }} style={{ width: 50, height: 50 }}/>)}
                         <Image source={require('../assets/images/isb-logo.png')} style={{ width: 150}} resizeMode='contain'/>

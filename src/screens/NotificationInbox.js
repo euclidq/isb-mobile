@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { StyleSheet, Text, View, ScrollView, SafeAreaView, StatusBar, TouchableOpacity, FlatList, Alert, RefreshControl, ActivityIndicator, Touchable } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, SafeAreaView, StatusBar, TouchableOpacity, FlatList, Alert, RefreshControl, ActivityIndicator, Touchable, Platform } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -149,7 +149,7 @@ const NotificationInbox = () => {
   return (
     <>
       <SafeAreaView style={{ backgroundColor: colors.offWhite }} />
-      <View style={globalStyles.container}>
+      <View style={[globalStyles.container, {marginTop: Platform.OS === 'ios' ? 0 : StatusBar.currentHeight}]}>
         <Text style={[fontStyles.screenTitle, {paddingHorizontal: spacing.m}]}>Notifications</Text>
 
         <ScrollView

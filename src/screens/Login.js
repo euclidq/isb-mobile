@@ -173,7 +173,7 @@ const Login = ({ navigation }) => {
 
   return (
     <KeyboardAvoidingView behavior={"padding"} style={{ flex: 1, backgroundColor: colors.offWhite }}>
-      <SafeAreaView style={{ backgroundColor: colors.primary }} />
+      <SafeAreaView style={{ backgroundColor: colors.primary, marginTop: Platform.OS === 'ios' ? 0 : StatusBar.currentHeight}} />
         <ScrollView style={{ flex:1}}>
           <View style={styles.logoContainer}>
             <Image style={styles.logo} source={require('../assets/images/iserve-logo.png')} />

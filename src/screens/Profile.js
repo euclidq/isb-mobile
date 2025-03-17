@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Text, View, Image, TouchableOpacity, ScrollView, StyleSheet, StatusBar, RefreshControl} from 'react-native';
+import { Text, View, Image, TouchableOpacity, ScrollView, StyleSheet, StatusBar, RefreshControl, Platform} from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -22,7 +22,7 @@ const Profile = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [showAlertModal, setShowAlertModal] = useState(false);
-  const [modalContent, setModalContent] = useState({ title: '', message: '', buttons: [] });
+    const [modalContent, setModalContent] = useState({ title: '', message: '', buttons: [] });
 
     const getStatusColor = (status) => {
         switch (status) {
@@ -383,7 +383,7 @@ const Profile = () => {
 
     return (
         <View style={globalStyles.container}>
-            <View style={styles.headerContainer}>
+            <View style={[styles.headerContainer, {marginTop: Platform.OS === 'ios' ? 0 : StatusBar.currentHeight}]}>
                 <Text style={fontStyles.screenTitle}>Profile</Text>
                 <TouchableOpacity onPress={handleLogout} style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <Text style={[fontStyles.bold, {color: colors.primary, marginRight: 5}]}>Log out</Text>

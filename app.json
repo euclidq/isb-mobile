@@ -20,7 +20,12 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.teambooldogs.iservebarangay"
+      "package": "com.teambooldogs.iservebarangay",
+      "config": {
+      "googleMaps": {
+        "apiKey": "AIzaSyDpLwDFGDAxSFaAhiJdf3zLWB0tDAJr2S8"
+      }
+    }
     },
     "web": {
       "favicon": "./assets/favicon.png"

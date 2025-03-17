@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { StatusBar, View, Text, ScrollView, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { StatusBar, View, Text, ScrollView, StyleSheet, TouchableOpacity, Image, Platform } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { colors, spacing, sizes, globalStyles, fontStyles } from '../styles/theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -114,7 +114,7 @@ const HelpCenter = () => {
   
     return (
         <View style={globalStyles.container}>
-            <Text style={[fontStyles.screenTitle, {paddingHorizontal: spacing.m}]}>Help Center</Text>
+            <Text style={[fontStyles.screenTitle, {paddingHorizontal: spacing.m, marginTop: Platform.OS === 'ios' ? 0 : StatusBar.currentHeight}]}>Help Center</Text>
             <ScrollView
                 style={globalStyles.scrollViewContainer}
                 ref={scrollViewRef}
