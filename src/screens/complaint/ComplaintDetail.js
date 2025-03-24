@@ -206,6 +206,15 @@ const ComplaintDetail = ({ route }) => {
         navigation.navigate('Full Screen Picture', { imageUri });
     };
 
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('beforeRemove', (e) => {
+            e.preventDefault();
+            navigation.navigate('Complaints');
+        });
+    
+        return unsubscribe;
+    }, [navigation]);
+
     useLayoutEffect(() => {
         if (userType === 'resident' && complaint?.status === 'Pending') {
             navigation.setOptions({

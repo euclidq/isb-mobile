@@ -76,6 +76,15 @@ const AnnouncementDetail = ({ route }) => {
         navigation.navigate('Full Screen Picture', { imageUri });
     };
 
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('beforeRemove', (e) => {
+            e.preventDefault();
+            navigation.navigate('Announcements');
+        });
+    
+        return unsubscribe;
+    }, [navigation]);
+    
     return (
         <View style={globalStyles.container}>
             <ScrollView onScroll={handleScroll} contentContainerStyle={globalStyles.scrollViewContainer}>

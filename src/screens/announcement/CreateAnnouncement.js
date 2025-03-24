@@ -394,7 +394,6 @@ const CreateAnnouncement = () => {
         setShowAlertModal(true);
     };
     
-
     const clearForm = (modal = false) => {
         if (!modal) {
             setFormData((prevFormData) => ({
@@ -404,6 +403,7 @@ const CreateAnnouncement = () => {
                 title: '',
                 content: '',
                 Importance: 'Not Important',
+                endDate: '',
                 attachments: [],
             }));
             return;
@@ -428,6 +428,7 @@ const CreateAnnouncement = () => {
                             title: '',
                             content: '',
                             Importance: 'Not Important',
+                            endDate: '',
                             attachments: [],
                         }));
                         setShowAlertModal(false);

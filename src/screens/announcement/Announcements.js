@@ -88,6 +88,15 @@ const Announcements = () => {
         flatListRef.current.scrollToIndex({ index, animated: true, viewOffset: LEFT_OFFSET });
     };
 
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('beforeRemove', (e) => {
+            e.preventDefault();
+            navigation.navigate('Home Screen');
+        });
+    
+        return unsubscribe;
+    }, [navigation]);
+
     useLayoutEffect(() => {
         if (userType) {
             navigation.setOptions({

@@ -343,7 +343,7 @@ const Profile = () => {
         navigation.navigate('Full Screen Picture', { imageUri });
     };
 
-    const handleLogout = async () => {
+    const handleLogout = () => {
         setModalContent({
             title: 'Confirm Log out',
             message: 'Are you sure you want to log out?',
@@ -356,16 +356,16 @@ const Profile = () => {
                 },
                 {
                     label: 'Log out',
-                    onPress: async () => {
+                    onPress: () => {
                         try {
-                            await AsyncStorage.removeItem('userType');
-                            await AsyncStorage.removeItem('userData');
-                            await AsyncStorage.removeItem('userToken');
-                            await AsyncStorage.removeItem('fullName');
-                            await AsyncStorage.removeItem('barangayData');
-                            await AsyncStorage.removeItem('directoryData');
-                            await AsyncStorage.removeItem('hotlinesData');
-                            await AsyncStorage.removeItem('fcmToken');
+                            AsyncStorage.removeItem('userType');
+                            AsyncStorage.removeItem('userData');
+                            AsyncStorage.removeItem('userToken');
+                            AsyncStorage.removeItem('fullName');
+                            AsyncStorage.removeItem('barangayData');
+                            AsyncStorage.removeItem('directoryData');
+                            AsyncStorage.removeItem('hotlinesData');
+                            AsyncStorage.removeItem('fcmToken');
     
                             navigation.navigate('Login');
     
@@ -383,7 +383,7 @@ const Profile = () => {
 
     return (
         <View style={globalStyles.container}>
-            <View style={[styles.headerContainer, {marginTop: Platform.OS === 'ios' ? 0 : StatusBar.currentHeight}]}>
+            <View style={[styles.headerContainer, {marginTop: Platform.OS === 'ios' ? 0 : StatusBar.currentHeighty}]}>
                 <Text style={fontStyles.screenTitle}>Profile</Text>
                 <TouchableOpacity onPress={handleLogout} style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <Text style={[fontStyles.bold, {color: colors.primary, marginRight: 5}]}>Log out</Text>

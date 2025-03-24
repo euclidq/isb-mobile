@@ -12,7 +12,7 @@ const Tags = ({ category, importance, status, backgroundColor, color }) => {
                     <Text style={globalStyles.importantTagText}>{importance}</Text>
                 </View>
             )}
-            {status && status === 'Inactive' && (
+            {status && (status === 'Inactive' || status === 'Archived')  && (
                 <View style={[globalStyles.tag, backgroundColor !== '' && { backgroundColor: colors.lightgray }]}>
                     <Text style={[{color: colors.darkgray}, sizes.body]}>{status}</Text>
                 </View>

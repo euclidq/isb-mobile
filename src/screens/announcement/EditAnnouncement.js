@@ -26,6 +26,7 @@ const EditAnnouncement = ({ route, navigation }) => {
     const [inputHeight, setInputHeight] = useState(50);
     const [isLoading, setIsLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isArchiving, setIsArchiving] = useState(false);
     const [focusedInput, setFocusedInput] = useState(null);
     const [showAlertModal, setShowAlertModal] = useState(false);
     const [showDatePicker, setShowDatePicker] = useState(false);
@@ -39,6 +40,7 @@ const EditAnnouncement = ({ route, navigation }) => {
         Importance: '',
         attachments: [],
         endDate: '',
+        status: '',
     });
     const categories = ['Health and Safety', 'Community Assistance', 'Public Services', 'Events', 'Public Advisory', 'Others'];
 
@@ -81,6 +83,7 @@ const EditAnnouncement = ({ route, navigation }) => {
                     Importance: fetchedAnnouncement.Importance || '',
                     attachments: attachmentsArray,
                     endDate: fetchedAnnouncement.endDate || '',
+                    status: fetchedAnnouncement.status || '',
                 });
             } catch (error) {
                 console.error('Error fetching announcement detail:', error);
@@ -384,7 +387,7 @@ const EditAnnouncement = ({ route, navigation }) => {
                             if (response.status === 200) {
                                 setModalContent({
                                     title: 'Success',
-                                    message: 'Announcement editted successfully.',
+                                    message: 'Announcement edited successfully.',
                                     buttons: [
                                         {
                                             label: 'Close',
@@ -423,14 +426,14 @@ const EditAnnouncement = ({ route, navigation }) => {
     
     const handleArchive = async () => {
         const { announcementCategory, otherCategory, title, content, Importance, attachments, endDate } = formData;
-    
+        
         const requiredFields = [
             { field: announcementCategory, label: 'Announcement Category' },
             { field: title, label: 'Announcement Title' },
             { field: content, label: 'Announcement Content' },
         ];
     
-        if (announcementCategory === 'Others' && !formData.otherCategory) {
+        if (announcementCategory === 'Others' && !otherCategory) {
             requiredFields.push({ field: otherCategory, label: 'Other Announcement Category' });
         }
     
@@ -467,6 +470,7 @@ const EditAnnouncement = ({ route, navigation }) => {
                 {
                     label: 'Archive',
                     onPress: async () => {
+                        setIsArchiving(true);
                         try {
                             const formDataToSend = new FormData();
                             formDataToSend.append('updated_by', userData._id);
@@ -521,6 +525,8 @@ const EditAnnouncement = ({ route, navigation }) => {
                             });
                             setShowAlertModal(true);
                             return;
+                        } finally {
+                            setIsArchiving(false);
                         }
                     },
                     buttonStyle: globalStyles.modalButtonDanger,
@@ -568,6 +574,11 @@ const EditAnnouncement = ({ route, navigation }) => {
     };
     
     useLayoutEffect(() => {
+        if (formData.status === "Archived") {
+            navigation.setOptions({ headerRight: () => null });
+            return;
+        }
+        
         navigation.setOptions({
             headerRight: () => (
                 <TouchableOpacity onPress={handleArchive} style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -576,7 +587,7 @@ const EditAnnouncement = ({ route, navigation }) => {
                 </TouchableOpacity>
             ),
         });
-    }, [navigation]);
+    }, [navigation, formData]);
 
     return (
         <KeyboardAvoidingView behavior={"padding"} style={globalStyles.container}>
@@ -792,6 +803,7 @@ const EditAnnouncement = ({ route, navigation }) => {
                 )}
             </ScrollView>
             <LoadingModal visible={isSubmitting} purpose={'Submitting'}/>
+            <LoadingModal visible={isArchiving} purpose={'Archiving'}/>
             <AlertModal
                 visible={showAlertModal}
                 title={modalContent.title}

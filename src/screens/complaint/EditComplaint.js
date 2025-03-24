@@ -30,6 +30,7 @@ const EditComplaint = ({ route, navigation }) => {
     const [showTimePicker, setShowTimePicker] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isArchiving, setIsArchiving] = useState(false);
     const [showAlertModal, setShowAlertModal] = useState(false);
     const [modalContent, setModalContent] = useState({ title: '', message: '', buttons: [] });
     const [focusedInput, setFocusedInput] = useState('');
@@ -514,10 +515,10 @@ const EditComplaint = ({ route, navigation }) => {
         setShowAlertModal(true);
     };
 
-    const handleCancel = async () => {
+    const handleArchive = async () => {
         setModalContent({
-            title: 'Confirm Cancellation',
-            message: 'Are you sure you want to cancel this complaint?',
+            title: 'Confirm Archive',
+            message: 'Are you sure you want to archive this complaint?',
             buttons: [
                 {
                     label: 'No',
@@ -528,27 +529,41 @@ const EditComplaint = ({ route, navigation }) => {
                 {
                     label: 'Yes',
                     onPress: async () => {
-                        const response = await axios.delete(`${process.env.EXPO_PUBLIC_API_BASE_URL}/incident-reports/${complaintID}`, {
-                            headers: {
-                                'Authorization': `Bearer ${userToken}`,
-                            },
-                        });
-
-                        if (response.status === 200) {
+                        setIsArchiving(true);
+                        try {
+                            const response = await axios.put(`${process.env.REACT_APP_BACKEND_API_KEY}/api/incident-reports/${incident._id}`, { status: 'Archived' });
+    
+                            if (response.status === 200) {
+                                setModalContent({
+                                    title: 'Success',
+                                    message: 'Complaint cancelled successfully.',
+                                    buttons: [
+                                        {
+                                            label: 'Close',
+                                            onPress: () => {
+                                                setShowAlertModal(false);
+                                                navigation.navigate('Complaints')
+                                            },
+                                        }
+                                    ]
+                                });
+                                setShowAlertModal(true);
+                            }
+                        } catch {
+                            console.error('Error cancelling the complaint:', error);
                             setModalContent({
-                                title: 'Success',
-                                message: 'Complaint cancelled successfully.',
+                                title: 'Error',
+                                message: 'Failed to cancel the complaint. Please try again.',
                                 buttons: [
                                     {
                                         label: 'Close',
-                                        onPress: () => {
-                                            setShowAlertModal(false);
-                                            navigation.navigate('Complaints')
-                                        },
+                                        onPress: () => setShowAlertModal(false)
                                     }
                                 ]
                             });
                             setShowAlertModal(true);
+                        } finally {
+                            setIsArchiving(false);
                         }
                     },
                     buttonStyle: globalStyles.modalButtonDanger,
@@ -595,9 +610,14 @@ const EditComplaint = ({ route, navigation }) => {
     };
 
     useLayoutEffect(() => {
+        if (formData.status === "Archived") {
+            navigation.setOptions({ headerRight: () => null });
+            return;
+        }
+
         navigation.setOptions({
             headerRight: () => (
-                <TouchableOpacity onPress={handleCancel} style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <TouchableOpacity onPress={handleArchive} style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <Text style={[fontStyles.bold, {color: colors.red, marginRight: 5}]}>Cancel</Text>
                     <MaterialCommunityIcons name="trash-can-outline" size={30} color={colors.red} />
                 </TouchableOpacity>

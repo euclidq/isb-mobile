@@ -193,6 +193,15 @@ const DocumentRequestDetail = ({ route }) => {
         navigation.navigate('Full Screen Picture', { imageUri });
     };
 
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('beforeRemove', (e) => {
+            e.preventDefault();
+            navigation.navigate('DocumentRequests');
+        });
+    
+        return unsubscribe;
+    }, [navigation]);
+
     useLayoutEffect(() => {
         if (userType === 'resident' && documentRequest?.status === 'Pending') {
             navigation.setOptions({
