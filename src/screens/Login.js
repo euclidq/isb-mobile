@@ -20,7 +20,7 @@ const Login = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState({});
+  const [loginError, setLoginError] = useState('');
   const [focusedInput, setFocusedInput] = useState(null);
   const [showAlertModal, setShowAlertModal] = useState(false);
   const [modalContent, setModalContent] = useState({ title: '', message: '', buttons: [] });
@@ -36,7 +36,7 @@ const Login = ({ navigation }) => {
   }, []);
 
   useEffect(() => {
-    setErrors({});
+    setLoginError('');
   }, [activeScreen]);
 
   useEffect(()=> {
@@ -105,23 +105,16 @@ const Login = ({ navigation }) => {
     }
   };
 
-  const validateForm = () => {
-    let formErrors = {};
-    let isValid = true;
+  const handleLoginPress = async () => {
     if (!email) {
-      formErrors.email = 'Please enter your Email Address.';
-      isValid = false;
+      setLoginError('Please enter your Email Address.');
+      return;
     }
     if (!password) {
-      formErrors.password = 'Please enter your Password.';
-      isValid = false;
+      setLoginError('Please enter your Password.');
+      return;
     }
-    setErrors(formErrors);
-    return isValid;
-  };
 
-  const handleLoginPress = async () => {
-    if (!validateForm()) return;
     setIsLogging(true);
     const endpoint = activeScreen === 'resident' ? '/login/resident' : '/admin/login';
     const userType = activeScreen;
@@ -144,23 +137,10 @@ const Login = ({ navigation }) => {
         navigation.navigate('Home Screen');
       }
     } catch (error) {
-      if (error.response) {
-        let formErrors = {};
-        const { status, data } = error.response;
-        if (status === 401) {
-          formErrors.password = 'The password you entered is incorrect. Please try again.';
-        } else if (status === 403) {
-          formErrors.email = 'Email is unverified. Please check your inbox to verify your email and try again.';
-        } else if (status === 404) {
-          formErrors.email = 'The email you entered does not belong to any account.';
-        } else if (data && data.message) {
-          errorMessage = data.message;
-        }
-        setErrors(formErrors);
-      } else if (error.request) {
-        errorMessage = 'Network error. Please check your internet connection and try again.';
+      if (error.response && error.response.data && error.response.data.message) {
+        setLoginError(error.response.data.message);
       } else {
-        errorMessage = `Error: ${error.message}`;
+        setLoginError('Failed to sign in. Please check your network and try again.');
       }
     } finally {
       setIsLogging(false);
@@ -209,7 +189,6 @@ const Login = ({ navigation }) => {
                       onFocus={() => setFocusedInput('email')}
                       onBlur={() => setFocusedInput(null)}
                     />
-                    {errors.email && <Text style={globalStyles.errorText}>{errors.email}</Text>}
                   </View>
 
                   <View style={globalStyles.inputWrapper}>
@@ -232,7 +211,7 @@ const Login = ({ navigation }) => {
                         onPress={() => setShowPassword(!showPassword)}
                       />
                     </View>
-                    {errors.password && <Text style={globalStyles.errorText}>{errors.password}</Text>}
+                    {loginError && <Text style={globalStyles.errorText}>{loginError}</Text>}
                   </View>
                 </View>
                 <View style={styles.buttonContainer}>
