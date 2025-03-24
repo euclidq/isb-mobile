@@ -373,6 +373,7 @@ const CreateComplaint = () => {
             { field: incidentdescription, label: 'Statement of Complaint' },
             { field: relieftobegranted, label: 'Prayer for Relief' },
             { field: dateAndTimeofIncident, label: 'Date and Time of Incident' },
+            { field: Attachment, label: 'Supporting Evidences' },
         ];
         
         if (typeofcomplaint === 'Others' && !othertypeofcomplaint) {
@@ -385,7 +386,7 @@ const CreateComplaint = () => {
     
         const missingFields = requiredFields
             .filter(({ field }) => !field || (Array.isArray(field) && field.length === 0))
-            .map(({ label }) => label);
+            .map(({ label }) => label);    
     
         if (missingFields.length > 0) {
             setModalContent({
@@ -797,6 +798,7 @@ const CreateComplaint = () => {
                             <TouchableOpacity onPress={handleAttachmentUpload} style={globalStyles.buttonSecondary}>
                                 <Text style={globalStyles.buttonSecondaryText}>+ Upload File</Text>
                             </TouchableOpacity>
+                            {(!formData.Attachment || formData.Attachment?.length === 0) && <Text style={globalStyles.errorText}>Required</Text>}
                             {formData.Attachment.length > 0 && (
                                 <View style={globalStyles.attachmentsContainer}>
                                     {formData.Attachment.map((attachment, index) => (
