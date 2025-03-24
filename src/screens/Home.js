@@ -196,7 +196,10 @@ const Home = () => {
         }
         try {
             try {
-                const barangayResponse = await axios.get(`${process.env.EXPO_PUBLIC_API_BASE_URL}/barangay/${userData.barangay}`);
+                const barangayId = userData.barangay._id ? userData.barangay._id : userData.barangay;
+                console.log('barangayId', barangayId);
+                const barangayResponse = await axios.get(`${process.env.EXPO_PUBLIC_API_BASE_URL}/barangay/${barangayId}`);
+                console.log('barangayResponse', barangayResponse);
                 await AsyncStorage.setItem('barangayData', JSON.stringify(barangayResponse.data.barangay || barangayResponse.data));
                 setBarangayLogo(barangayResponse.data.barangay.logo || barangayResponse.data.logo);
             } catch (error) {
